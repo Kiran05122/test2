@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>WebRTC с чатом и передачей файлов (с никами)</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+/* Стили как у тебя */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      display: flex;
+      height: 90vh;
+      gap: 10px;
+    }
+    #video-section {
+      flex: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    video {
+      width: 90%;
+      max-height: 45vh;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+      background: black;
+    }
+    #remoteVideosContainer video {
+      width: 200px;
+      border: 1px solid #ccc;
+      margin: 5px;
+    }
+    #controls {
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 8px 15px;
+      margin-right: 5px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background-color: #4caf50;
+      color: white;
+      font-weight: 600;
+    }
+    button:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+    #sidebar {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      height: 100%;
+    }
+    #room-info {
+      margin-bottom: 15px;
+    }
+    #usersList {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 8px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      background: #fafafa;
+    }
+    .user {
+      padding: 5px 8px;
+      margin-bottom: 5px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .user:hover {
+      background: #c8c8c8;
+    }
+    #chat {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #fff;
+    }
+    #chatMessages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+      font-size: 0.9em;
+      background: #f9f9f9;
+      border-bottom: 1px solid #ddd;
+    }
+    #chatMessages div {
+      margin-bottom: 8px;
+    }
+    #chatInputContainer {
+      display: flex;
+      padding: 5px;
+    }
+    #chatInput {
+      flex: 1;
+      padding: 6px 10px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      outline: none;
+    }
+    #sendChatBtn {
+      margin-left: 6px;
+      padding: 6px 15px;
+      background: #2196f3;
+      border-radius: 4px;
+      color: white;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+    #fileInput {
+      margin-top: 10px;
+    }
+    #downloadLink {
+      margin-top: 10px;
+      display: none;
+      color: #2196f3;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    #statusText {
+      margin-top: 10px;
+      font-style: italic;
+      color: green;
+      min-height: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div id="video-section">
+    <h2>Комната: <span id="roomId"></span></h2>
+    <p>Ваш Ник: <span id="myId"></span></p>
+
+    <div id="controls">
+      <button id="startBtn">Start Camera</button>
+      <button id="toggleMicBtn" disabled>Выкл Микрофон</button>
+      <button id="toggleCamBtn" disabled>Выкл Камера</button>
+      <button id="screenBtn">Share Screen</button>
+      <button id="recordBtn">Record</button>
+      <button id="stopBtn" disabled>Stop</button>
+      <a id="downloadLink" href="#" download>Download Recording</a>
+    </div>
+
+    <video id="localVideo" autoplay muted playsinline></video>
+
+<!-- Новый блок для второго экрана -->
+ <select id="screenSelect" style="margin-bottom: 10px; padding: 5px;">
+  <option value="">Выбрать экран</option>
+</select>
+<video id="secondScreen" autoplay playsinline muted ="width: 1200px; height: 1000px; background: black;"></video>
+
+
+<div id="remoteVideosContainer"></div>
+
+
+    <div id="statusText"></div>
+  </div>
+
+  <div id="sidebar">
+    <div id="room-info">
+      <h3>Участники</h3>
+      <div id="usersList"></div>
+    </div>
+
+    <div id="chat">
+      <div id="chatMessages"></div>
+      <div id="chatInputContainer">
+        <input type="text" id="chatInput" placeholder="Введите сообщение..." />
+        <button id="sendChatBtn">Отправить</button>
+      </div>
+      <input type="file" id="fileInput" />
+      <label for="imageInput" style="cursor:pointer; margin-top:10px; display:inline-block; color:#2196f3; font-weight:600;">
+  Выберите изображение
+</label>
+<input type="file" id="imageInput" accept="image/*" style="display:none" />
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
